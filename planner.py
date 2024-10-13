@@ -3,7 +3,6 @@ from pathlib import Path
 from autogen import UserProxyAgent, GroupChat, GroupChatManager
 from agents.llm_config import llm_config
 from agents import all_agents
-from tools.knowledge_sources_scrapper import scrape_knowledge_sources
 from tools.rag_engine import rag_query
 
 from dotenv import load_dotenv
@@ -11,13 +10,15 @@ from dotenv import load_dotenv
 _ = load_dotenv(Path(__file__).parent / ".env")
 
 
-def plan(prompt: str, datafile: str):
+def plan(prompt: str, knowledge_sources_dir: str):
 
-    prompt += f"Use data from '{datafile}'.\n\n"
+    rag_knowledge = rag_query(prompt, knowledge_sources_dir=knowledge_sources_dir)
+    print(f"RAG knowledge: {rag_knowledge}")
+    prompt = f"Use the following knowledge sources: {rag_knowledge}\n\n"
     prompt += "Formulate a plan to answer the question.\n\n"
 
     print(f"Using model: {llm_config['model']}")
-    print("Analyzing data...")
+    print("Making a plan...")
 
     groupchat = GroupChat(agents=all_agents, messages=[], max_round=10)
     manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)
@@ -40,11 +41,11 @@ def plan(prompt: str, datafile: str):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python analyze.py <promptfile> <datafile>")
-        print("Example: python analyze.py data/prompt.txt data/data.vcf")
+        print("Usage: python plan.py <promptfile> <knowledge_sources_dir>")
+        print("Example: python plan.py data/prompt_planner.txt knowledge_sources")
         sys.exit(1)
 
     promptfile = sys.argv[1]
-    datafile = sys.argv[2]
+    knowledge_sources_dir = sys.argv[2]
     prompt = open(promptfile).read()
-    analyze(prompt, datafile)
+    plan(prompt, knowledge_sources_dir=knowledge_sources_dir)
