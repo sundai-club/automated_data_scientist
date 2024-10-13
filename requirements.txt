@@ -1,4 +1,5 @@
 autogen-agentchat
+autogen-agentchat[jupyter-executor]
 pyautogen
 python-dotenv
 openai
