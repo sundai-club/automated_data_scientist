@@ -31,17 +31,18 @@ gpt4_llm_config = {"config_list": config_list_gpt4, "cache_seed": 42}
 
 image_agent = MultimodalConversableAgent(
     name="image-explainer",
+    system_message="You are an expert Data Scientist, your goal is to analyze the given plot to infer what it is showing. \
+        The input is given as \"Description_Message IMAGE_ADDRESS\". \
+        So you also need to evaluate that the plot matches the what's expected in the description message. If it doesn't make sure to point that out.\
+        As an expert data scientist you should provide detailed qualitative and quantitative analysis of the plot and also suggest any improvements \
+        that can be done to address the given description better or generally.",
     max_consecutive_auto_reply=10,
     llm_config={"config_list": config_list_4v, "temperature": 0.5, "max_tokens": 300},
 )
 
 user_proxy = autogen.UserProxyAgent(
     name="User_proxy",
-    system_message="You are an expert Data Scientist, your goal is to analyze the given plot to infer what it is showing. \
-        The input is given as \"Description_Message IMAGE_ADDRESS\". \
-        So you also need to evaluate that the plot matches the what's expected in the description message. If it doesn't make sure to point that out.\
-        As an expert data scientist you should provide detailed qualitative and quantitative analysis of the plot and also suggest any improvements \
-        that can be done to address the given description better or generally.",
+    system_message = "You ran an analysis and generated a plot from it.",
     human_input_mode="NEVER",  # Try between ALWAYS or NEVER
     max_consecutive_auto_reply=0,
     code_execution_config={
@@ -49,3 +50,9 @@ user_proxy = autogen.UserProxyAgent(
     },  # Please set use_docker=True if docker is available to run the generated code. Using docker is safer than running the generated code directly.
 )
 
+# Ask the question with an image
+user_proxy.initiate_chat(
+    image_agent,
+    message="""Housing price change over years.
+<img /Users/vaibhavdixit/automated_data_scientist/data/unnamed.png>.""",
+)
