@@ -11,5 +11,5 @@ pip install -r requirements.txt
 # Run
 
 ```
-python analyze.py "Make the best analysis ever" data.csv
+python analyze.py  data/prompt.txt data/data.vcf
 ```
