@@ -9,18 +9,24 @@ from dotenv import load_dotenv
 _ = load_dotenv(Path(__file__).parent / ".env")
 
 
-def analyze(prompt: str, data: str):
+def analyze(prompt: str, datafile: str):
+
+    prompt += f"Use data from '{datafile}'."
 
     print(f"Using model: {llm_config['model']}")
 
-    groupchat = GroupChat(agents=all_agents, messages=[], max_round=12)
+    groupchat = GroupChat(agents=all_agents, messages=[], max_round=10)
     manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)
 
     user_proxy = UserProxyAgent(
         "user_proxy",
-        human_input_mode="TERMINATE",
-        max_consecutive_auto_reply=3,
-        code_execution_config={"use_docker": False, "enabled": False},
+        human_input_mode="NEVER",
+        code_execution_config={
+            "use_docker": False,
+            "enabled": True,
+            "last_n_messages": 3,
+            "work_dir": "coding",
+        },
     )
 
     user_proxy.initiate_chat(manager, message=prompt)
@@ -38,5 +44,4 @@ if __name__ == "__main__":
     promptfile = sys.argv[1]
     datafile = sys.argv[2]
     prompt = open(promptfile).read()
-    data = open(datafile).read()
-    analyze(prompt, data)
+    analyze(prompt, datafile)
