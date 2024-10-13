@@ -16,3 +16,5 @@ else:
             0,
         ],
     }
+
+print(llm_config)
