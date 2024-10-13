@@ -10,6 +10,12 @@ pip install -r requirements.txt
 
 # Run
 
+Run the analyzer
 ```
 python analyze.py  data/prompt.txt data/data.vcf
+```
+
+Run the planner
+```
+python planner.py data/prompt_planner.txt knowledge_sources
 ```

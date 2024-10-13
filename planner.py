@@ -36,7 +36,7 @@ def plan(prompt: str, knowledge_sources_dir: str):
 
     user_proxy.initiate_chat(manager, message=prompt)
 
-    print("Data analyzed!")
+    print("Plan created!")
 
 
 if __name__ == "__main__":
