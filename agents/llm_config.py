@@ -1,4 +1,9 @@
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+_ = load_dotenv(Path(__file__).parent / "../.env")
 
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 
@@ -16,5 +21,3 @@ else:
             0,
         ],
     }
-
-print(llm_config)

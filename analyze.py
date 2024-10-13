@@ -11,13 +11,15 @@ _ = load_dotenv(Path(__file__).parent / ".env")
 
 def analyze(prompt: str, data: str):
 
+    print(f"Using model: {llm_config['model']}")
+
     groupchat = GroupChat(agents=all_agents, messages=[], max_round=12)
     manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)
 
     user_proxy = UserProxyAgent(
         "user_proxy",
         human_input_mode="TERMINATE",
-        max_consecutive_auto_reply=5,
+        max_consecutive_auto_reply=3,
         code_execution_config={"use_docker": False, "enabled": False},
     )
 

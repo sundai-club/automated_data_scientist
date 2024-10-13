@@ -1,3 +1,4 @@
 autogen-agentchat
 pyautogen
 python-dotenv
+openai
