@@ -1,5 +1,7 @@
 import sys
 from pathlib import Path
+from autogen import UserProxyAgent
+from agents import all_agents
 
 from dotenv import load_dotenv
 
@@ -7,7 +9,14 @@ _ = load_dotenv(Path(__file__).parent / ".env")
 
 
 def analyze(prompt: str, data: str):
-    # TODO insert agentic system
+
+    user_proxy = UserProxyAgent("user_proxy", code_execution_config=False)
+
+    user_proxy.initiate_chat(
+        *all_agents,
+        message=prompt,
+    )
+
     print("Analyzing data...")
     print("Data analyzed!")
 
