@@ -11,9 +11,11 @@ _ = load_dotenv(Path(__file__).parent / ".env")
 
 def analyze(prompt: str, datafile: str):
 
-    prompt += f"Use data from '{datafile}'."
+    prompt += f"Use data from '{datafile}'.\n\n"
+    prompt += "Output the analysis in a ipynb file.\n\n"
 
     print(f"Using model: {llm_config['model']}")
+    print("Analyzing data...")
 
     groupchat = GroupChat(agents=all_agents, messages=[], max_round=10)
     manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)
@@ -31,7 +33,6 @@ def analyze(prompt: str, datafile: str):
 
     user_proxy.initiate_chat(manager, message=prompt)
 
-    print("Analyzing data...")
     print("Data analyzed!")
 
 
