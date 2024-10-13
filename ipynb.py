@@ -2,7 +2,7 @@ import json
 import os
 
 
-def append_code_to_ipynb(code_str, output_filename):
+def append_code_to_ipynb(code_str, output_filename="notebook.ipynb"):
     """
     Appends Python code to an existing .ipynb Jupyter Notebook file, or creates a new one if it doesn't exist.
 

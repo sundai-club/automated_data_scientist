@@ -12,7 +12,7 @@ if openai_api_key:
 else:
     # use local LLM, install https://ollama.com/library/llama3.2:1b
     llm_config = {
-        "model": "llama3.2:1b",
+        "model": "llama3.2",  # llama3.2:1b
         "base_url": "http://127.0.0.1:11434/v1",
         "api_key": "ollama",
         "temperature": 0.5,

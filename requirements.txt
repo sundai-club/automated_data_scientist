@@ -3,3 +3,8 @@ autogen-agentchat[jupyter-executor]
 pyautogen
 python-dotenv
 openai
+
+# for agents
+matplotlib
+biopython
+pandas

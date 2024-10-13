@@ -12,6 +12,7 @@ from autogen.coding.jupyter import JupyterCodeExecutor, LocalJupyterServer
 from agents.llm_config import llm_config
 from agents import all_agents
 from typing_extensions import Annotated
+from ipynb import append_code_to_ipynb
 
 from dotenv import load_dotenv
 
@@ -76,6 +77,35 @@ the output will be a path to the image instead of the image itself."""
         human_input_mode="NEVER",
     )
 
+    functions = [
+        {
+            "name": "save_as_jupyther",
+            "description": "Appends Python code to an existing .ipynb Jupyter Notebook file, or creates a new one if it doesn't exist.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "code_str": {
+                        "type": "string",
+                        "description": "A string containing Python code.",
+                    }
+                },
+                "required": ["code_str"],
+            },
+        }
+    ]
+
+    save_as_jupyther = ConversableAgent(
+        name="save_as_jupyther",
+        system_message="I'm SaveAsJupyter. I will save the analysis as a Jupyter notebook.",
+        llm_config=llm_config | {"functions": functions},
+    )
+
+    save_as_jupyther.register_function(
+        function_map={
+            "save_as_jupyther": append_code_to_ipynb,
+        },
+    )
+
     # engineer = AssistantAgent(
     #     name="Engineer",
     #     llm_config=llm_config,
@@ -104,11 +134,13 @@ the output will be a path to the image instead of the image itself."""
 
     # user_proxy.register_for_execution(see_file)
 
-    agents = [code_writer_agent, code_executor_agent]
+    agents = [code_writer_agent, code_executor_agent, save_as_jupyther]
     groupchat = GroupChat(agents=agents, messages=[], allow_repeat_speaker=False)
 
     manager = GroupChatManager(groupchat=groupchat, llm_config=llm_config)
     user_proxy.initiate_chat(manager, message=prompt)
+
+    server.stop()
 
     print("Data analyzed!")
 
