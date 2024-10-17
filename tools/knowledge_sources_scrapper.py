@@ -23,7 +23,7 @@ def scrape_knowledge_sources(knowledge_sources_dir: str = '../knowledge_sources'
             doc.text = doc.text.upper()
             all_docs.append(doc)
 
-    print(f"Loaded {len(all_docs)} docs.")
+    print(f"Loaded {len(all_docs)} pages.")
 
     # Check if the folder exists
     if not Path(knowledge_sources_dir).exists():
@@ -43,7 +43,8 @@ def scrape_knowledge_sources(knowledge_sources_dir: str = '../knowledge_sources'
 
     return all_docs
 
-
+# TODO: create a web scrapper to either: 1)download the pdfs from the web and store them in the knowledge_sources folder
+# 2) scrape the text from the web pages and store them in the knowledge_sources folder
 
 if __name__ == "__main__":
     # TODO: Write test for this function
