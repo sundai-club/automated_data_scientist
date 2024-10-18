@@ -86,4 +86,4 @@ chat_interface.send(
 )
 chat_interface.servable()
 
-# to analyze Tesla stock data and generate a volatility plot.
+#  analyze Tesla stock data and generate a volatility plot.
