@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from llama_index.core import SimpleDirectoryReader
 from llama_index.readers.file import PDFReader
+from tqdm import tqdm
 
 def scrape_knowledge_sources(knowledge_sources_dir: str = '../knowledge_sources'):
     # Iterate through all files in the knowledge_sources folder and load only pdfs (for now)
@@ -17,8 +18,8 @@ def scrape_knowledge_sources(knowledge_sources_dir: str = '../knowledge_sources'
 
 
     all_docs = []
-    for docs in reader.iter_data():
-        for doc in docs:
+    for docs in tqdm(reader.iter_data(), desc="Scraping knowledge sources"):
+        for doc in tqdm(docs, desc="Parsing documents"):
             # do something with the doc
             doc.text = doc.text.upper()
             all_docs.append(doc)

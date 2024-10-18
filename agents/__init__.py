@@ -1,3 +1,3 @@
-from agents.agent_template import simple_agent
+from agents.agent_template import simple_agent, planning_agent, coding_agent, statistics_agent
 
-all_agents = [simple_agent, simple_agent]
+all_agents = [simple_agent, planning_agent, coding_agent, statistics_agent]
