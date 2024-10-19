@@ -76,3 +76,4 @@ wcwidth==0.2.13
 webencodings==0.5.1
 xgboost==2.1.1
 xyzservices==2024.9.0
+llama_index
