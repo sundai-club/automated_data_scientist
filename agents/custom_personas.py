@@ -4,6 +4,8 @@ from autogen.runtime_logging import log_new_agent, logging_enabled
 
 from autogen.agentchat.conversable_agent import ConversableAgent
 
+from autogen.coding import LocalCommandLineCodeExecutor
+
 
 class CodingAgent(ConversableAgent):
     """(In preview) Assistant agent, designed to solve a task with LLM.
@@ -77,6 +79,21 @@ class CodingAgent(ConversableAgent):
         if description is None:
             if system_message == self.DEFAULT_SYSTEM_MESSAGE:
                 self.description = self.DEFAULT_DESCRIPTION
+
+
+# Create an agent with code executor configuration.
+class CodingExecuter(CodingAgent):
+    def __init__(self):
+        executor = LocalCommandLineCodeExecutor(
+            timeout=10,  # Timeout for each code execution in seconds.
+            work_dir="out_code",  # Use the temporary directory to store the code files.
+        )
+        super().__init__(
+            "code_executor_agent",
+            llm_config=False,  # Turn off LLM for this agent.
+            code_execution_config={"executor": executor},  # Use the local command line code executor.
+            human_input_mode="ALWAYS",  # Always take human input for this agent for safety.
+        )
 
 class PlanningAgent(ConversableAgent):
     """(In preview) Assistant agent, designed to solve a task with LLM.

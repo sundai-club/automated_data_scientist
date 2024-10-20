@@ -18,6 +18,7 @@ def scrape_knowledge_sources(knowledge_sources_dir: str = '../knowledge_sources'
 
 
     all_docs = []
+    print("Parsing for knowledge sources using RAG...")
     for docs in tqdm(reader.iter_data(), desc="Scraping knowledge sources"):
         for doc in tqdm(docs, desc="Parsing documents"):
             # do something with the doc

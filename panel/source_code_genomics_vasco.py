@@ -5,14 +5,86 @@ import io
 from PIL import Image
 import sys 
 from agents.custom_personas import PlanningAgent
+from tools.rag_engine import rag_query
 
-pn.extension(design="material")
+
+css = """
+:root {
+    --design-primary-color: #a9a9a9; /* Neon Grey */
+    --design-secondary-color: #2f2f2f; /* Dark Grey Neon */
+    --design-background-color: #121212; /* Dark Background */
+    --design-text-color: #333333; /* Darker text color for better readability */
+    font-family: 'Roboto', sans-serif;
+
+}
+
+body {
+    background-image: url('panel/background_automated_ai_genomic_data_scientis_dark_backround.png');
+    background-color: #121212; /* Fallback color in case the image fails to load */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(15, 12, 41, 0.85); /* Dark overlay */
+}
+
+.chat-container {
+    background-color: rgba(30, 30, 47, 0.5); /* Semi-transparent background for the chat area */
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    margin: 10px;
+}
+
+.message {
+    background: rgba(255, 255, 255, 0.5); /* White background with 50% transparency */
+    color: var(--design-text-color);
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    opacity: 0.5; /* 50% transparency */
+}
+
+.timestamp {
+    color: #ffffff; /* White text color */
+}
+
+.icon, .bk-TablerIcon {
+    color: #ffffff; /* White text color */
+}
+
+input, button {
+    background: linear-gradient(to right, var(--design-primary-color), var(--design-secondary-color));
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: var(--design-secondary-color);
+    transform: scale(1.05);
+}
+
+input[type='text'], textarea {
+    background: linear-gradient(to right, #000, #999); /* Gradient background for input fields */
+    color: white;
+    border: none;
+    opacity: 0.5; /* 50% transparency */
+    padding: 8px;
+    border-radius: 10px;
+}
+"""
+
+# # Apply the global CSS to the Panel extension
+pn.extension(raw_css=[css])
+# pn.extension(design="material")
 
 # Define configurations for AutoGen
 config_list_gpt4 = autogen.config_list_from_json(
     "OAI_CONFIG_LIST",
     filter_dict={
-        "model": ["gpt-4"],
+        "model": ["gpt-4o-mini"],
     },
 )
 
@@ -46,10 +118,12 @@ groupchat = autogen.GroupChat(agents=[user_proxy, planner, coder, critic], messa
 manager = autogen.GroupChatManager(groupchat=groupchat, llm_config=llm_config)
 
 def callback(contents: str, user: str, instance: pn.chat.ChatInterface):
+    # RAG on the message
+    rag_knowledge = rag_query(contents, knowledge_sources_dir='knowledge_sources')
     # Use AutoGen to process the message
     user_proxy.initiate_chat(
         manager,
-        message=f"Download data from /Users/ai/Documents/sundai/automated-data-scientist/panel/homo_sapiens_genomics.csv and {contents}"
+        message=f"Download data from /Users/vprudente/Downloads/automated_data_scientist/panel/homo_sapiens_genomics.csv and {contents}. Use as inspiration the following knowledge {rag_knowledge}"
     )
     
     # Collect all messages from the group chat
@@ -65,6 +139,7 @@ def callback(contents: str, user: str, instance: pn.chat.ChatInterface):
     
     # Join all messages into a single string
     response = "\n".join(all_messages)
+    
     
     # Check if a plot was generated
     plot_path = "groupchat/TSLA_Volatility.png"

@@ -6,9 +6,16 @@ from agents import all_agents
 from tools.rag_engine import rag_query
 
 from dotenv import load_dotenv
+from autogen.coding import LocalCommandLineCodeExecutor
+
+
 
 _ = load_dotenv(Path(__file__).parent / ".env")
 
+executor = LocalCommandLineCodeExecutor(
+    timeout=10,
+    work_dir="output_code"
+)
 
 def plan(prompt: str, knowledge_sources_dir: str):
 
