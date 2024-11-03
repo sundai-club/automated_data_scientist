@@ -124,7 +124,7 @@ def callback(contents: str, user: str, instance: pn.chat.ChatInterface):
     # Use AutoGen to process the message
     user_proxy.initiate_chat(
         manager,
-        message=f"Download data from /Users/heejecho/src/automated_data_scientist/panel/homo_sapiens_genomics.csv and {contents}. Use as inspiration the following knowledge {rag_knowledge}"
+        message=f"Download data from /Users/vprudente/Downloads/automated_data_scientist/panel/homo_sapiens_genomics.csv and {contents}. Use as inspiration the following knowledge {rag_knowledge}"
     )
     
     # Collect all messages from the group chat
