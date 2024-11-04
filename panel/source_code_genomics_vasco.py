@@ -5,7 +5,7 @@ import io
 from PIL import Image
 import sys 
 from agents.custom_personas import PlanningAgent
-from tools.rag_engine import rag_query
+from tools.rag_engine import web_rag_query
 
 
 css = """
@@ -89,7 +89,25 @@ config_list_gpt4 = autogen.config_list_from_json(
     },
 )
 
-llm_config = {"config_list": config_list_gpt4, "seed": 42, "api_type": "openai"}
+llm_config = {
+    "config_list": config_list_gpt4,
+    "seed": 42, "api_type": "openai",
+    "functions":[
+        {
+            "name": "web_rag_query",
+            "description": "retrieves contextual information from the web to supplement the current knowledge base",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name":{
+                        "type": "string",
+                        "description": "The name of the customer that will be used to lookup the account id"
+                    }
+                },
+                "required":["name"]
+            }
+        }]
+    }
 
 code_execution_config = {
     "use_docker": False
@@ -100,6 +118,16 @@ user_proxy = autogen.UserProxyAgent(
    system_message="A human admin.",
    code_execution_config={"last_n_messages": 3, "work_dir": "groupchat", "use_docker": False},
    human_input_mode="NEVER",
+)
+researcher = autogen.AssistantAgent(
+    name="Researcher",
+    system_message="""You are a researcher whose sole job is to provide contextual information to the group - only do this if you determine additional context is needed to complete the task at hand or to supplement the current knowledge base.""",
+    llm_config=llm_config,
+)
+researcher.register_function(
+    function_map={
+        "web_rag_query": web_rag_query,
+    }
 )
 coder = autogen.AssistantAgent(
     name="Coder",
@@ -124,7 +152,7 @@ def callback(contents: str, user: str, instance: pn.chat.ChatInterface):
     # Use AutoGen to process the message
     user_proxy.initiate_chat(
         manager,
-        message=f"Download data from /Users/vprudente/Downloads/automated_data_scientist/panel/homo_sapiens_genomics.csv and {contents}. Use as inspiration the following knowledge {rag_knowledge}"
+        message=f"Download data from /Users/heejecho/src/automated_data_scientist/data/Starbucks_satisfactory_survey.csv and {contents}. Use as inspiration the following knowledge {rag_knowledge}"
     )
     
     # Collect all messages from the group chat
